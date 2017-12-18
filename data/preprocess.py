@@ -4,6 +4,7 @@ import matplotlib.image as mpimg
 import cv2
 import numpy as np
 import torch
+import subprocess
 
 
 # N_IMAGES = 202599
@@ -76,6 +77,13 @@ def preprocess_attributes():
     print("Saving attributes to %s ..." % ATTR_PATH)
     torch.save(attributes, ATTR_PATH)
 
+def download_data():
+    url_prefix = 'https://s3-us-west-2.amazonaws.com/fadernetworks/'
+    subprocess.Popen(['wget', url_prefix + 'list_attr_celeba.txt']).wait()
+    subprocess.Popen(['wget', url_prefix + 'img_align_celeba.zip']).wait()
+    subprocess.Popen(['unzip', 'img_align_celeba.zip']).wait()
+    
 
+download_data()
 preprocess_images()
 preprocess_attributes()
