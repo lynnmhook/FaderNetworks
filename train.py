@@ -105,8 +105,13 @@ assert not params.lat_dis_reload or os.path.isfile(params.lat_dis_reload)
 assert not params.ptc_dis_reload or os.path.isfile(params.ptc_dis_reload)
 assert not params.clf_dis_reload or os.path.isfile(params.clf_dis_reload)
 
-eval_clf_workspace = fs_tracker.get_artifact('eval_clf') or '.'
-eval_clf_path = os.path.join(eval_clf_workspace, params.eval_clf)
+eval_clf_artifact = fs_tracker.get_artifact('eval_clf') or '.'
+
+if params.eval_clf != '':
+    eval_clf_path = os.path.join(eval_clf_artifact, params.eval_clf)
+else:
+    eval_clf_path = eval_clf_artifact
+
 assert os.path.isfile(eval_clf_path)
 
 assert params.lambda_lat_dis == 0 or params.n_lat_dis > 0
