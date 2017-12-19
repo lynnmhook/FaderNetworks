@@ -23,7 +23,7 @@ from .loader import AVAILABLE_ATTR
 FALSY_STRINGS = {'off', 'false', '0'}
 TRUTHY_STRINGS = {'on', 'true', '1'}
 
-MODELS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'models')
+MODELS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'model')
 
 
 logger = getLogger()

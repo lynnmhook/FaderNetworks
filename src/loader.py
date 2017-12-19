@@ -27,7 +27,9 @@ AVAILABLE_ATTR = [
     "Wearing_Necklace", "Wearing_Necktie", "Young"
 ]
 
-DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
+import preprocess
+
+DATA_PATH = preprocess.IMG_DIR
 
 
 def log_attributes_stats(train_attributes, valid_attributes, test_attributes, params):

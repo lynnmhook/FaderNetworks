@@ -18,6 +18,15 @@ from src.model import Classifier
 from src.training import classifier_step
 from src.evaluation import compute_accuracy
 
+try:
+    from studio import fs_tracker
+    DEFAULT_MODEL_DIR = fs_tracker.get_model_directory()
+except ImportError:
+    fs_tracker = None
+    DEFAULT_MODEL_DIR = 'models/'
+
+   
+MODEL_DIR = os.environ.get('MODEL_DIR', DEFAULT_MODEL_DIR)
 
 # parse parameters
 parser = argparse.ArgumentParser(description='Classifier')
@@ -79,7 +88,7 @@ def save_model(name):
     """
     Save the model.
     """
-    path = os.path.join(params.dump_path, '%s.pth' % name)
+    path = os.path.join(MODEL_DIR, '%s.pth' % name)
     logger.info('Saving the classifier to %s ...' % path)
     torch.save(classifier, path)
 

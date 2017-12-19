@@ -5,14 +5,27 @@ import cv2
 import numpy as np
 import torch
 import subprocess
+import tempfile
 
+try:
+    from studio import fs_tracker
+    DEFAULT_ZIP_PATH = fs_tracker.get_artifact('images')
+    DEFAULT_ATTR_PATH = fs_tracker.get_artifact('attributes') 
+except ImportError:
+    fs_tracker = None
+    DEFAULT_ZIP_PATH = 'data/img_align_celeba.zip'
+    DEFAULT_ATTR_PATH = 'data/list_attr_celeba.txt'
 
-# N_IMAGES = 202599
-N_IMAGES = 20000
+N_IMAGES = 202599
 IMG_SIZE = 256
-IMG_PATH = 'images_%i_%i.pth' % (IMG_SIZE, IMG_SIZE)
-ATTR_PATH = 'attributes.pth'
 
+IMG_DIR = os.path.join(tempfile.gettempdir(), 'img_align_celeba')
+IMG_ZIP_PATH = os.environ.get('IMG_ZIP_PATH', DEFAULT_ZIP_PATH)
+IMG_ATTR_PATH = os.environ.get('IMG_ATTR_PATH', DEFAULT_ATTR_PATH)
+
+IMG_PATH = os.path.join(IMG_DIR, 'images_%i_%i.pth' % (IMG_SIZE, IMG_SIZE))
+IMG20K_PATH = os.path.join(IMG_DIR, 'images_%i_%i_20000.pth' % (IMG_SIZE, IMG_SIZE))
+ATTR_PATH = os.path.join(IMG_DIR, 'attributes.pth')
 
 def preprocess_images():
 
@@ -25,7 +38,7 @@ def preprocess_images():
     for i in range(1, N_IMAGES + 1):
         if i % 10000 == 0:
             print(i)
-        raw_images.append(mpimg.imread('img_align_celeba/%06i.jpg' % i)[20:-20])
+        raw_images.append(mpimg.imread(os.path.join(IMG_DIR, '%06i.jpg' % i))[20:-20])
 
     if len(raw_images) != N_IMAGES:
         raise Exception("Found %i images. Expected %i" % (len(raw_images), N_IMAGES))
@@ -48,7 +61,7 @@ def preprocess_images():
     assert data.size() == (N_IMAGES, 3, IMG_SIZE, IMG_SIZE)
 
     print("Saving images to %s ..." % IMG_PATH)
-    torch.save(data[:20000].clone(), 'images_%i_%i_20000.pth' % (IMG_SIZE, IMG_SIZE))
+    torch.save(data[:20000].clone(), IMG20K_PATH)
     torch.save(data, IMG_PATH)
 
 
@@ -58,7 +71,7 @@ def preprocess_attributes():
         print("%s exists, nothing to do." % ATTR_PATH)
         return
 
-    attr_lines = [line.rstrip() for line in open('list_attr_celeba.txt', 'r')]
+    attr_lines = [line.rstrip() for line in open(IMG_ATTR_PATH, 'r')]
     attr_lines = attr_lines[:N_IMAGES+2]
     assert len(attr_lines) == N_IMAGES + 2
 
@@ -77,13 +90,12 @@ def preprocess_attributes():
     print("Saving attributes to %s ..." % ATTR_PATH)
     torch.save(attributes, ATTR_PATH)
 
-def download_data():
-    url_prefix = 'https://s3-us-west-2.amazonaws.com/fadernetworks/'
-    subprocess.Popen(['wget', url_prefix + 'list_attr_celeba.txt']).wait()
-    subprocess.Popen(['wget', url_prefix + 'img_align_celeba.zip']).wait()
-    subprocess.Popen(['unzip', 'img_align_celeba.zip']).wait()
+def unzip_data():
+    print("Unzipping images file...")
+    subprocess.Popen(['unzip', '-u', IMG_ZIP_PATH, '-d', tempfile.gettempdir()]).wait()
     
 
-download_data()
+
+unzip_data()
 preprocess_images()
 preprocess_attributes()
