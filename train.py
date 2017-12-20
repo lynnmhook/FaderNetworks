@@ -15,6 +15,8 @@ from src.model import AutoEncoder, LatentDiscriminator, PatchDiscriminator, Clas
 from src.training import Trainer
 from src.evaluation import Evaluator
 
+from studio import fs_tracker
+
 
 # parse parameters
 parser = argparse.ArgumentParser(description='Images autoencoder')
@@ -102,7 +104,16 @@ assert not params.ae_reload or os.path.isfile(params.ae_reload)
 assert not params.lat_dis_reload or os.path.isfile(params.lat_dis_reload)
 assert not params.ptc_dis_reload or os.path.isfile(params.ptc_dis_reload)
 assert not params.clf_dis_reload or os.path.isfile(params.clf_dis_reload)
-assert os.path.isfile(params.eval_clf)
+
+eval_clf_artifact = fs_tracker.get_artifact('eval_clf') or '.'
+
+if params.eval_clf != '':
+    eval_clf_path = os.path.join(eval_clf_artifact, params.eval_clf)
+else:
+    eval_clf_path = eval_clf_artifact
+
+assert os.path.isfile(eval_clf_path)
+
 assert params.lambda_lat_dis == 0 or params.n_lat_dis > 0
 assert params.lambda_ptc_dis == 0 or params.n_ptc_dis > 0
 assert params.lambda_clf_dis == 0 or params.n_clf_dis > 0
@@ -118,7 +129,8 @@ ae = AutoEncoder(params).cuda()
 lat_dis = LatentDiscriminator(params).cuda() if params.n_lat_dis else None
 ptc_dis = PatchDiscriminator(params).cuda() if params.n_ptc_dis else None
 clf_dis = Classifier(params).cuda() if params.n_clf_dis else None
-eval_clf = torch.load(params.eval_clf).cuda().eval()
+
+eval_clf = torch.load(eval_clf_path).cuda().eval()
 
 # trainer / evaluator
 trainer = Trainer(ae, lat_dis, ptc_dis, clf_dis, train_data, params)

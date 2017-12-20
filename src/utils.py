@@ -23,8 +23,13 @@ from .loader import AVAILABLE_ATTR
 FALSY_STRINGS = {'off', 'false', '0'}
 TRUTHY_STRINGS = {'on', 'true', '1'}
 
-MODELS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'models')
+try:
+    from studio import fs_tracker
+    DEFAULT_MODELS_PATH = fs_tracker.get_model_directory()
+except ImportError:
+    DEFAULT_MODELS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'models')
 
+MODELS_PATH = os.environ.get('MODELS_PATH', DEFAULT_MODELS_PATH)
 
 logger = getLogger()
 
