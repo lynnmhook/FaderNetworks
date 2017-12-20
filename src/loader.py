@@ -11,8 +11,6 @@ import torch
 from torch.autograd import Variable
 from logging import getLogger
 
-from studio import fs_tracker
-
 logger = getLogger()
 
 
@@ -54,9 +52,7 @@ def load_images(params):
     """
     # load data
     images_filename = 'images_%i_%i_20000.pth' if params.debug else 'images_%i_%i.pth'
-    
     images_filename = images_filename % (params.img_sz, params.img_sz)
-    images_filename = fs_tracker.get_artifact('images')
 
     images = torch.load(os.path.join(DATA_PATH, images_filename))
     attributes = torch.load(os.path.join(DATA_PATH, 'attributes.pth'))
