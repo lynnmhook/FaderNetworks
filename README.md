@@ -65,7 +65,7 @@ To train your own model you first need to train a classifier to let the model ev
 
 
 ```bash
-studio run [--cloud=ec2 --gpus=1] -co=s3://fadernetworks/attributes.pth:attributes --capture-once=s3://fadernetworks/images_256_256_20000.pth:images classifier.py
+studio run [--cloud=ec2 --gpus=1] -co=s3://modeling-team-data/hackathon/fadernetworks/data/shoes/:data classifier.py --img_sz=128
 
 # Main parameters
 --img_sz 256                  # image size
@@ -94,7 +94,7 @@ studio run [--cloud=ec2 --gpus=1] -co=s3://fadernetworks/attributes.pth:attribut
 ### Train a Fader Network
 
 ```bash
-studio run --cloud=ec2spot --num-workers=1 --gpus=1 --reuse=1513292897_4cf1eb0d-fec5-44e4-80a3-b34b0e9dce34/workspace:eval_clf --capture-once=s3://fadernetworks/attributes.pth:attributes --capture-once=s3://fadernetworks/images_256_256_20000.pth:images train.py --debug 1 --eval_clf models/default/js2wouvtiz/best.pth
+studio run --cloud=ec2spot --num-workers=1 --gpus=1 -co=s3://modeling-team-data/hackathon/fadernetworks/data/shoes/:data train.py --debug 1 --img_sz=128
 ```
 
 You can train a Fader Network with `train.py`. The autoencoder can receive feedback from:
