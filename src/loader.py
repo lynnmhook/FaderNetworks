@@ -28,7 +28,7 @@ AVAILABLE_ATTR = [
 import preprocess
 
 DATA_PATH = preprocess.IMG_DIR
-
+IMG_SIZE = preprocess.IMG_SIZE
 
 def log_attributes_stats(train_attributes, valid_attributes, test_attributes, params):
     """
@@ -52,7 +52,7 @@ def load_images(params):
     """
     # load data
     images_filename = 'images_%i_%i_20000.pth' if params.debug else 'images_%i_%i.pth'
-    images_filename = images_filename % (params.img_sz, params.img_sz)
+    images_filename = images_filename % (IMG_SIZE, IMG_SIZE)
 
     images = torch.load(os.path.join(DATA_PATH, images_filename))
     attributes = torch.load(os.path.join(DATA_PATH, 'attributes.pth'))
