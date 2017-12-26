@@ -15,8 +15,9 @@ from src.model import AutoEncoder, LatentDiscriminator, PatchDiscriminator, Clas
 from src.training import Trainer
 from src.evaluation import Evaluator
 
-from studio import fs_tracker
+import preprocess
 
+from studio import fs_tracker
 
 # parse parameters
 parser = argparse.ArgumentParser(description='Images autoencoder')
@@ -93,6 +94,9 @@ parser.add_argument("--eval_clf", type=str, default="",
 parser.add_argument("--debug", type=bool_flag, default=False,
                     help="Debug mode (only load a subset of the whole dataset)")
 params = parser.parse_args()
+
+
+params.img_sz = preprocess.IMG_SIZE
 
 # check parameters
 check_attr(params)

@@ -18,6 +18,8 @@ from src.model import Classifier
 from src.training import classifier_step
 from src.evaluation import compute_accuracy
 
+import preprocess
+
 try:
     from studio import fs_tracker
     DEFAULT_MODEL_DIR = fs_tracker.get_model_directory()
@@ -63,6 +65,8 @@ parser.add_argument("--reload", type=str, default="",
 parser.add_argument("--debug", type=bool_flag, default=False,
                     help="Debug mode (only load a subset of the whole dataset)")
 params = parser.parse_args()
+
+params.img_sz = preprocess.IMG_SIZE
 
 # check parameters
 check_attr(params)
