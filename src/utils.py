@@ -25,11 +25,10 @@ TRUTHY_STRINGS = {'on', 'true', '1'}
 
 try:
     from studio import fs_tracker
-    DEFAULT_MODELS_PATH = fs_tracker.get_model_directory()
 except ImportError:
-    DEFAULT_MODELS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'models')
+    fs_tracker = None
 
-MODELS_PATH = os.environ.get('MODELS_PATH', DEFAULT_MODELS_PATH)
+DEAFULT_MODELS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'models')
 
 logger = getLogger()
 
@@ -177,6 +176,12 @@ def get_dump_path(params):
     """
     Create a directory to store the experiment.
     """
+    if fs_tracker:
+      return fs_tracker.get_model_directory()
+    if os.environ.get('MODELS_PATH'):
+      return os.environ.get('MODELS_PATH')
+
+    MODELS_PATH = DEFAULT_MODELS_PATH
     assert os.path.isdir(MODELS_PATH)
 
     # create the sweep path if it does not exist
