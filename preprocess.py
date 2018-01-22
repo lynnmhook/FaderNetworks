@@ -121,6 +121,3 @@ def unzip_data():
 
 unzip_data()
 preprocess()
-
-#preprocess_images()
-#preprocess_attributes()
