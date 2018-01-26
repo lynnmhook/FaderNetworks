@@ -54,7 +54,9 @@ def load_images(params):
     images_filename = 'images_%i_%i_20000.pth' if params.debug else 'images_%i_%i.pth'
     images_filename = images_filename % (IMG_SIZE, IMG_SIZE)
 
+    logger.info("loading images from {}".format(os.path.join(DATA_PATH, images_filename)))
     images = torch.load(os.path.join(DATA_PATH, images_filename))
+    logger.info("loading attributes from {}".format(os.path.join(DATA_PATH, images_filename)))
     attributes = torch.load(os.path.join(DATA_PATH, 'attributes.pth'))
 
     # images = torch.load(fs_tracker.get_artifact('images'))
@@ -87,6 +89,7 @@ def load_images(params):
     log_attributes_stats(train_attributes, valid_attributes, test_attributes, params)
     images = train_images, valid_images, test_images
     attributes = train_attributes, valid_attributes, test_attributes
+    logger.info("Done")
     return images, attributes
 
 
@@ -144,8 +147,11 @@ class DataSampler(object):
         Get a batch of images in a range with their attributes.
         """
         assert i < j
-        # batch_x = normalize_images(self.images[i:j])
-        # batch_y = self.attributes[i:j]
-        batch_x = normalize_images(self.images[i:j]).cuda()
-        batch_y = self.attributes[i:j].cuda()
+        if os.environ.get('FADER_NOCUDA') is not None:
+            batch_x = normalize_images(self.images[i:j])
+            batch_y = self.attributes[i:j]
+        else:
+            batch_x = normalize_images(self.images[i:j]).cuda()
+            batch_y = self.attributes[i:j].cuda()
+
         return Variable(batch_x, volatile=True), Variable(batch_y, volatile=True)

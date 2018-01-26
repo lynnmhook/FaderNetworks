@@ -17,6 +17,7 @@ from src.logger import create_logger
 from src.loader import load_images, DataSampler
 from src.utils import bool_flag
 
+from studio import fs_tracker
 
 # parse parameters
 parser = argparse.ArgumentParser(description='Attributes swapping')
@@ -41,15 +42,16 @@ parser.add_argument("--output_path", type=str, default="output.png",
 params = parser.parse_args()
 
 # check parameters
-assert os.path.isfile(params.model_path)
 assert params.n_images >= 1 and params.n_interpolations >= 2
 
 # create logger / load trained model
 logger = create_logger(None)
-ae = torch.load(params.model_path, map_location=lambda storage, loc: storage).eval()
+model_path = os.path.join(fs_tracker.get_artifact('model'), params.model_path)
+assert os.path.isfile(model_path)
+ae = torch.load(model_path, map_location=lambda storage, loc: storage).eval()
 
 # restore main parameters
-params.debug = True
+params.debug = False
 params.batch_size = 32
 params.v_flip = False
 params.h_flip = False
@@ -113,5 +115,8 @@ def get_grid(images, row_wise, plot_size=5):
 
 
 # generate the grid / save it to a PNG file
+print("Generating interpolations")
 grid = get_grid(interpolations, params.row_wise, params.plot_size)
+output_path = os.path.expanduser(params.output_path)
+print("Saving image to {}".format(output_path))
 matplotlib.image.imsave(params.output_path, grid.numpy().transpose((1, 2, 0)))

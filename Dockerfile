@@ -12,8 +12,7 @@ COPY . /opt/code
 ENV PATH=/opt/code:$PATH
 
 ENV MODEL_DIR=/opt/ml/model
-ENV IMG_ZIP_PATH=/opt/ml/input/data/images
-ENV IMG_ATTR_PATH=/opt/ml/input/data/attributes 
+ENV IMG_ZIP_PATH=/opt/ml/input/data/data
 
 
     
