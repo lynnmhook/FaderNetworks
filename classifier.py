@@ -28,7 +28,7 @@ except ImportError:
     DEFAULT_MODEL_DIR = 'models/'
 
    
-MODEL_DIR = os.environ.get('MODEL_DIR', DEFAULT_MODEL_DIR)
+MODEL_DIR = os.environ.get('MODEL_DIR') or DEFAULT_MODEL_DIR
 
 # parse parameters
 parser = argparse.ArgumentParser(description='Classifier')
