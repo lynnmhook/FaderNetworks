@@ -1,3 +1,4 @@
 #! /bin/bash
 cd /opt/code
+ls /opt/ml/input/data/training
 python classifier.py

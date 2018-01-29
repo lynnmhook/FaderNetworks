@@ -14,8 +14,7 @@ try:
 
 except ImportError:
     fs_tracker = None
-    DEFAULT_ZIP_PATH = 'data/img_align_celeba.zip'
-    DEFAULT_ATTR_PATH = 'data/list_attr_celeba.txt'
+    DEFAULT_ZIP_PATH = 'data/img_align_celeba_attr.zip'
 
 IMG_DIR = os.path.join(tempfile.gettempdir(), 'data')
 DEFAULT_ATTR_PATH = os.path.join(IMG_DIR, 'attributes.txt')

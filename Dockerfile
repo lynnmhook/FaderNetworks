@@ -11,8 +11,9 @@ COPY . /opt/code
 
 ENV PATH=/opt/code:$PATH
 
+ENV PYTHONUNBUFFERED=True
 ENV MODEL_DIR=/opt/ml/model
-ENV IMG_ZIP_PATH=/opt/ml/input/data/data
+ENV IMG_ZIP_PATH=/opt/ml/input/data/training/img_align_celeba_attr.zip
 
 
     

@@ -28,7 +28,7 @@ try:
 except ImportError:
     fs_tracker = None
 
-DEAFULT_MODELS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'models')
+DEFAULT_MODELS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'models')
 
 logger = getLogger()
 
