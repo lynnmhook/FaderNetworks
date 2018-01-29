@@ -1,6 +1,6 @@
 #!/bin/bash
 
-algorithm_name=fadernetwork
+algorithm_name=platform/fadernetwork
 
 account=$(aws sts get-caller-identity --query Account --output text)
 
@@ -8,7 +8,8 @@ account=$(aws sts get-caller-identity --query Account --output text)
 region=$(aws configure get region)
 region=${region:-us-west-2}
 
-fullname="${account}.dkr.ecr.${region}.amazonaws.com/${algorithm_name}:latest"
+fullname_classifier="${account}.dkr.ecr.${region}.amazonaws.com/${algorithm_name}-cls:latest"
+fullname_train="${account}.dkr.ecr.${region}.amazonaws.com/${algorithm_name}-trn:latest"
 
 aws ecr describe-repositories --repository-names "${algorithm_name}" > /dev/null 2>&1
 
@@ -23,9 +24,9 @@ $(aws ecr get-login --region ${region} --no-include-email)
 # Build the docker image locally with the image name and then push it to ECR
 # with the full name.
 
-docker build  -t ${algorithm_name} .
-docker tag ${algorithm_name} ${fullname}
+docker build  -t ${algorithm_name}-cls -f Dockerfile_classifier .
+docker tag ${algorithm_name}-cls ${fullname_classifier}
 
-docker push ${fullname}
+docker push ${fullname_classifier}
 echo "Image:"
-echo $fullname
+echo $fullname_classifier

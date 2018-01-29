@@ -15,5 +15,7 @@ ENV PYTHONUNBUFFERED=True
 ENV MODEL_DIR=/opt/ml/model
 ENV IMG_ZIP_PATH=/opt/ml/input/data/training/img_align_celeba_attr.zip
 
+RUN echo "cd /opt/code/" > /opt/code/train
+RUN echo "python classifier.py" >> /opt/code/train
 
     
