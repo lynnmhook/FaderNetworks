@@ -17,7 +17,9 @@ ENV IMG_ZIP_PATH=/opt/ml/input/data/training/img_align_celeba_attr.zip
 
 RUN echo "#!/bin/bash" > /opt/code/train
 RUN echo "cd /opt/code/" >> /opt/code/train
-RUN echo "python classifier.py" >> /opt/code/train
+RUN echo "ls /opt/ml/input/data/classifier/" >> /opt/code/train
+# RUN echo "python train.py --eval_clf=/opt/ml/input/data/classifier/best.pth" >> /opt/code/train
+
 RUN chmod +x /opt/code/train
 
     

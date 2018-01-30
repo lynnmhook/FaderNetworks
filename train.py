@@ -17,7 +17,10 @@ from src.evaluation import Evaluator
 
 import preprocess
 
-from studio import fs_tracker
+try:
+    from studio import fs_tracker
+except ImportError:
+    fs_tracker = None
 
 # parse parameters
 parser = argparse.ArgumentParser(description='Images autoencoder')
@@ -109,7 +112,7 @@ assert not params.lat_dis_reload or os.path.isfile(params.lat_dis_reload)
 assert not params.ptc_dis_reload or os.path.isfile(params.ptc_dis_reload)
 assert not params.clf_dis_reload or os.path.isfile(params.clf_dis_reload)
 
-eval_clf_artifact = fs_tracker.get_artifact('eval_clf') or '.'
+eval_clf_artifact = fs_tracker.get_artifact('eval_clf') if fs_tracker else '.'
 
 if params.eval_clf != '':
     eval_clf_path = os.path.join(eval_clf_artifact, params.eval_clf)
