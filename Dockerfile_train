@@ -24,7 +24,7 @@ RUN echo "cd /opt/ml/input/data/classifier/" >> /opt/code/train
 # decompress the model archive
 RUN echo "tar --verbose -xf model.tar.gz" >> /opt/code/train
 RUN echo "cd /opt/code/" >> /opt/code/train
-RUN echo "python train.py --eval_clf=/opt/ml/input/data/classifier/best.pth" >> /opt/code/train
+RUN echo "python train.py --eval_clf=/opt/ml/input/data/classifier/best.pth --attr=Smiling" >> /opt/code/train
 RUN chmod +x /opt/code/train
 
     
