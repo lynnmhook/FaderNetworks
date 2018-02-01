@@ -50,7 +50,7 @@ assert params.n_images >= 1 and params.n_interpolations >= 2
 # create logger / load trained model
 logger = create_logger(None)
 model_path = os.path.join(fs_tracker.get_artifact('model'), params.model_path)
-assert os.path.isfile(model_path)
+assert os.path.isfile(model_path), "model_path {} is not a file".format(model_path)
 ae = torch.load(model_path, map_location=lambda storage, loc: storage).eval()
 
 # restore main parameters
