@@ -39,6 +39,9 @@ parser.add_argument("--row_wise", type=bool_flag, default=True,
                     help="Represent image interpolations horizontally")
 parser.add_argument("--output_path", type=str, default="output.png",
                     help="Output path")
+parser.add_argument("--debug", type=bool_flag, default=True,
+                    help="Debug mode (only load a subset of the whole dataset)")
+
 params = parser.parse_args()
 
 # check parameters
