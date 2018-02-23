@@ -1,7 +1,17 @@
-#!/bin/bash
+#!/bin/bash -x
 
-algorithm_name_train=platform/fadernetwork-trn
-algorithm_name_classifier=platform/fadernetwork-cls
+function create_repo_if_missing() {
+    echo "Checking ECR repo $1"
+    aws ecr describe-repositories --repository-names $1 > /dev/null 2>&1
+
+    if [ $? -ne 0 ]
+    then
+        echo "Creating ECR repo $1"
+        aws ecr create-repository --repository-name $1 > /dev/null
+    fi
+}
+
+algorithm_name=platform/fadernetwork
 
 account=$(aws sts get-caller-identity --query Account --output text)
 
@@ -9,40 +19,20 @@ account=$(aws sts get-caller-identity --query Account --output text)
 region=$(aws configure get region)
 region=${region:-us-west-2}
 
-fullname_classifier="${account}.dkr.ecr.${region}.amazonaws.com/${algorithm_name_classifier}:latest"
-fullname_train="${account}.dkr.ecr.${region}.amazonaws.com/${algorithm_name_train}:latest"
-
-aws ecr describe-repositories --repository-names "${algorithm_name_classifier}" > /dev/null 2>&1
-
-if [ $? -ne 0 ]
-then
-    aws ecr create-repository --repository-name "${algorithm_name_classifier}" > /dev/null
-fi
-
-aws ecr describe-repositories --repository-names "${algorithm_name_train}" > /dev/null 2>&1
-
-if [ $? -ne 0 ]
-then
-    aws ecr create-repository --repository-name "${algorithm_name_train}" > /dev/null
-fi
-
+reponame="${account}.dkr.ecr.${region}.amazonaws.com/${algorithm_name}"
 
 # Get the login command from ECR and execute it directly
 $(aws ecr get-login --region ${region} --no-include-email)
 
-# Build the docker image locally with the image name and then push it to ECR
-# with the full name.
+for suffix in base cls trn int; do
+    # Prepare repo 
+    create_repo_if_missing ${algorithm_name}-${suffix}
+    # Build the docker image locally with the image name
+    docker build  -t ${algorithm_name}-${suffix} -f Dockerfile-${suffix} . --build-arg BASEIMAGE=${algorithm_name}-base
+    # tag it with full name including ECR repo prefix 
+    docker tag ${algorithm_name}-${suffix} ${reponame}-${suffix}
+    # and push to ECR
+    docker push ${reponame}-${suffix}
+done   
 
-docker build  -t ${algorithm_name_classifier} -f Dockerfile_classifier .
-docker tag ${algorithm_name_classifier} ${fullname_classifier}
-docker push ${fullname_classifier}
 
-echo "Classifier image:"
-echo $fullname_classifier
-
-docker build  -t ${algorithm_name_train} -f Dockerfile_train .
-docker tag ${algorithm_name_train} ${fullname_train}
-docker push ${fullname_train}
-
-echo "Training image:"
-echo $fullname_train

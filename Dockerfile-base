@@ -16,15 +16,4 @@ ENV PATH=/opt/code:$PATH
 ENV PYTHONUNBUFFERED=True
 ENV MODELS_PATH=/opt/ml/model
 ENV IMG_ZIP_PATH=/opt/ml/input/data/training/img_align_celeba_attr.zip
-
-# generate train executable script
-RUN echo "#!/bin/bash" > /opt/code/train
-# /opt/ml/input/data/classifier is where classifier model mounted
-RUN echo "cd /opt/ml/input/data/classifier/" >> /opt/code/train
-# decompress the model archive
-RUN echo "tar --verbose -xf model.tar.gz" >> /opt/code/train
-RUN echo "cd /opt/code/" >> /opt/code/train
-RUN echo "python train.py --eval_clf=/opt/ml/input/data/classifier/best.pth --attr=Smiling" >> /opt/code/train
-RUN chmod +x /opt/code/train
-
-    
+  

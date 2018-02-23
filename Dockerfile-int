@@ -1,0 +1,8 @@
+ARG BASEIMAGE
+FROM $BASEIMAGE
+
+ENTRYPOINT cd /opt/ml/input/data/model &&  \
+           tar --verbose -xf model.tar.gz && \
+           cd /opt/code && \
+           python interpolate.py  --model_path=/opt/ml/input/data/model/best-ae.pth --attr=Smiling
+               

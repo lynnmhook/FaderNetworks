@@ -1,0 +1,4 @@
+ARG BASEIMAGE 
+FROM $BASEIMAGE
+ENTRYPOINT cd /opt/code/ && python classifier.py
+  
