@@ -17,7 +17,10 @@ from src.logger import create_logger
 from src.loader import load_images, DataSampler
 from src.utils import bool_flag
 
-from studio import fs_tracker
+try:
+    from studio import fs_tracker
+except ImportError: 
+    fs_tracker = None
 
 # parse parameters
 parser = argparse.ArgumentParser(description='Attributes swapping')
@@ -49,7 +52,12 @@ assert params.n_images >= 1 and params.n_interpolations >= 2
 
 # create logger / load trained model
 logger = create_logger(None)
-model_path = os.path.join(fs_tracker.get_artifact('model'), params.model_path)
+
+if fs_tracker:
+    model_path = os.path.join(fs_tracker.get_artifact('model'), params.model_path)
+else:
+    model_path = params.model_path
+
 assert os.path.isfile(model_path), "model_path {} is not a file".format(model_path)
 ae = torch.load(model_path, map_location=lambda storage, loc: storage).eval()
 
