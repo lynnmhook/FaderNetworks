@@ -13,22 +13,12 @@ import torch
 
 from src.loader import load_images, DataSampler
 from src.utils import initialize_exp, bool_flag, attr_flag, check_attr
-from src.utils import get_optimizer, reload_model, print_accuracies
+from src.utils import get_optimizer, reload_model, print_accuracies, get_dump_path
 from src.model import Classifier
 from src.training import classifier_step
 from src.evaluation import compute_accuracy
 
 import preprocess
-
-try:
-    from studio import fs_tracker
-    DEFAULT_MODEL_DIR = fs_tracker.get_model_directory()
-except ImportError:
-    fs_tracker = None
-    DEFAULT_MODEL_DIR = 'models/'
-
-   
-MODEL_DIR = os.environ.get('MODEL_DIR') or DEFAULT_MODEL_DIR
 
 # parse parameters
 parser = argparse.ArgumentParser(description='Classifier')
@@ -86,13 +76,13 @@ if params.reload:
     reload_model(classifier, params.reload,
                  ['img_sz', 'img_fm', 'init_fm', 'hid_dim', 'attr', 'n_attr'])
 optimizer = get_optimizer(classifier, params.optimizer)
-
+dump_path = get_dump_path(params)
 
 def save_model(name):
     """
     Save the model.
     """
-    path = os.path.join(MODEL_DIR, '%s.pth' % name)
+    path = os.path.join(dump_path, '%s.pth' % name)
     logger.info('Saving the classifier to %s ...' % path)
     torch.save(classifier, path)
 
