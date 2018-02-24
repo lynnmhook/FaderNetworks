@@ -1,8 +1,9 @@
 ARG BASEIMAGE
 FROM $BASEIMAGE
+ENV FADER_NOCUDA=1
 
 ENTRYPOINT cd /opt/ml/input/data/fader &&  \
            tar --verbose -xf model.tar.gz && \
            cd /opt/code && \
-           python interpolate.py  --model_path=/opt/ml/input/data/fader/best_rec_ae.pth --attr=Smiling --output_path=/opt/ml/model/output.png
+           python interpolate.py  --model_path=/opt/ml/input/data/fader/best_rec_ae.pth --output_path=/opt/ml/model/output.png
                
